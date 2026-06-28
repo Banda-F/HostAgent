@@ -1,0 +1,9 @@
+services:
+  - type: web
+    name: hostagent
+    runtime: python
+    buildCommand: pip install -r requirements.txt
+    startCommand: gunicorn render_app:app
+    env: python
+    plan: free
+    healthCheckPath: /health

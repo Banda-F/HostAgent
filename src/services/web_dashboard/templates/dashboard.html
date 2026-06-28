@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HostAgent — Дашборд</title>
+    <style>
+        :root {
+            --bg: #0f1117;
+            --surface: #1a1d27;
+            --surface2: #242834;
+            --border: #2d3140;
+            --text: #e4e7ed;
+            --text2: #9ca3b4;
+            --accent: #6c5ce7;
+            --accent2: #a29bfe;
+            --green: #00b894;
+            --orange: #fdcb6e;
+            --red: #e17055;
+            --blue: #74b9ff;
+            --radius: 12px;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
+        }
+
+        .container { max-width: 1200px; margin: 0 auto; padding: 20px; }
+
+        /* Header */
+        .header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 20px 0;
+            border-bottom: 1px solid var(--border);
+            margin-bottom: 30px;
+        }
+        .header h1 { font-size: 1.5rem; }
+        .header h1 span { color: var(--accent); }
+        .header-badge {
+            background: var(--accent);
+            color: white;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+        }
+
+        /* Stats Grid */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 16px;
+            margin-bottom: 30px;
+        }
+        .stat-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 20px;
+        }
+        .stat-card .label { color: var(--text2); font-size: 0.85rem; margin-bottom: 8px; }
+        .stat-card .value { font-size: 1.8rem; font-weight: 700; }
+        .stat-card .value.green { color: var(--green); }
+        .stat-card .value.blue { color: var(--blue); }
+        .stat-card .value.orange { color: var(--orange); }
+        .stat-card .value.purple { color: var(--accent2); }
+
+        /* Sections */
+        .section {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 24px;
+            margin-bottom: 24px;
+        }
+        .section-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 20px;
+        }
+        .section-header h2 { font-size: 1.1rem; }
+        .section-header .badge {
+            font-size: 0.75rem;
+            background: var(--surface2);
+            padding: 2px 10px;
+            border-radius: 10px;
+            color: var(--text2);
+        }
+
+        /* Providers Table */
+        .providers-table { width: 100%; border-collapse: collapse; }
+        .providers-table th {
+            text-align: left;
+            color: var(--text2);
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            padding: 12px 16px;
+            border-bottom: 1px solid var(--border);
+        }
+        .providers-table td {
+            padding: 12px 16px;
+            border-bottom: 1px solid var(--border);
+            font-size: 0.9rem;
+        }
+        .providers-table tr:hover { background: var(--surface2); }
+        .commission-bar {
+            display: inline-block;
+            height: 8px;
+            border-radius: 4px;
+            background: var(--accent);
+            margin-right: 8px;
+        }
+        .recurring-badge {
+            font-size: 0.75rem;
+            padding: 2px 8px;
+            border-radius: 10px;
+        }
+        .recurring-badge.yes { background: #00b89422; color: var(--green); }
+        .recurring-badge.no { background: #e1705522; color: var(--red); }
+
+        /* Links List */
+        .link-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 12px 0;
+            border-bottom: 1px solid var(--border);
+        }
+        .link-item:last-child { border-bottom: none; }
+        .link-info h3 { font-size: 0.95rem; margin-bottom: 4px; }
+        .link-info .url {
+            font-size: 0.8rem;
+            color: var(--text2);
+            font-family: monospace;
+        }
+        .link-metrics {
+            display: flex;
+            gap: 20px;
+            font-size: 0.85rem;
+        }
+        .link-metrics .metric span { display: block; color: var(--text2); font-size: 0.75rem; }
+
+        /* Content List */
+        .content-item {
+            padding: 12px 0;
+            border-bottom: 1px solid var(--border);
+        }
+        .content-item:last-child { border-bottom: none; }
+        .content-item h3 { font-size: 0.95rem; margin-bottom: 4px; }
+        .content-item .meta {
+            font-size: 0.8rem;
+            color: var(--text2);
+            display: flex;
+            gap: 16px;
+        }
+        .status-badge {
+            font-size: 0.75rem;
+            padding: 2px 8px;
+            border-radius: 10px;
+        }
+        .status-badge.draft { background: #fdcb6e22; color: var(--orange); }
+        .status-badge.published { background: #00b89422; color: var(--green); }
+
+        /* Footer */
+        .footer {
+            text-align: center;
+            padding: 20px 0;
+            color: var(--text2);
+            font-size: 0.8rem;
+        }
+        .footer a { color: var(--accent2); text-decoration: none; }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .stats-grid { grid-template-columns: repeat(2, 1fr); }
+            .link-metrics { gap: 10px; }
+            .providers-table { font-size: 0.85rem; }
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+
+    <!-- Header -->
+    <div class="header">
+        <h1>🤖 Host<span>Agent</span></h1>
+        <span class="header-badge">v1.0 Dashboard</span>
+    </div>
+
+    <!-- Stats Cards -->
+    <div class="stats-grid">
+        <div class="stat-card">
+            <div class="label">🔗 Партнёрских ссылок</div>
+            <div class="value purple">{{ stats.links_count }}</div>
+        </div>
+        <div class="stat-card">
+            <div class="label">👆 Всего кликов</div>
+            <div class="value blue">{{ stats.total_clicks }}</div>
+        </div>
+        <div class="stat-card">
+            <div class="label">✅ Конверсий</div>
+            <div class="value green">{{ stats.total_conversions }}</div>
+        </div>
+        <div class="stat-card">
+            <div class="label">💰 Заработано</div>
+            <div class="value orange">{{ "%.2f"|format(stats.total_earnings) }}₽</div>
+        </div>
+    </div>
+
+    <!-- Providers Comparison -->
+    <div class="section">
+        <div class="section-header">
+            <h2>📊 Сравнение партнёрских программ</h2>
+            <span class="badge">{{ providers|length }} провайдеров</span>
+        </div>
+        <table class="providers-table">
+            <thead>
+                <tr>
+                    <th>Провайдер</th>
+                    <th>Комиссия</th>
+                    <th>Тип выплат</th>
+                    <th>Мин. вывод</th>
+                    <th>Условия</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for p in providers %}
+                <tr>
+                    <td><strong>{{ p.name }}</strong></td>
+                    <td>
+                        <span class="commission-bar" style="width: {{ p.commission_percent * 1.5 }}px"></span>
+                        <strong>{{ p.commission_percent }}%</strong>
+                    </td>
+                    <td>
+                        <span class="recurring-badge {{ 'yes' if p.recurring else 'no' }}">
+                            {{ '🔄 Повторные' if p.recurring else '1️⃣ Разовая' }}
+                        </span>
+                    </td>
+                    <td>{{ p.min_payout }}₽</td>
+                    <td>
+                        {% if p.conditions_url %}
+                        <a href="{{ p.conditions_url }}" target="_blank" style="color: var(--accent2);">
+                            Открыть ↗
+                        </a>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <!-- My Links -->
+    <div class="section">
+        <div class="section-header">
+            <h2>🔗 Мои партнёрские ссылки</h2>
+            <span class="badge">{{ links|length }} ссылок</span>
+        </div>
+        {% if links %}
+            {% for link in links %}
+            <div class="link-item">
+                <div class="link-info">
+                    <h3>{{ link.provider_name }}</h3>
+                    <span class="url">hostagent.ru/go/{{ link.short_slug }}</span>
+                </div>
+                <div class="link-metrics">
+                    <div class="metric"><span>Клики</span>{{ link.clicks }}</div>
+                    <div class="metric"><span>Конверсии</span>{{ link.conversions }}</div>
+                    <div class="metric"><span>₽</span>{{ link.earnings }}</div>
+                </div>
+            </div>
+            {% endfor %}
+        {% else %}
+            <p style="color: var(--text2);">Нет добавленных ссылок. Добавьте через Telegram-бот.</p>
+        {% endif %}
+    </div>
+
+    <!-- Generated Content -->
+    <div class="section">
+        <div class="section-header">
+            <h2>📝 Сгенерированный контент</h2>
+            <span class="badge">{{ content|length }} материалов</span>
+        </div>
+        {% if content %}
+            {% for piece in content %}
+            <div class="content-item">
+                <h3>{{ piece.title or 'Без заголовка' }}</h3>
+                <div class="meta">
+                    <span>{{ piece.content_type }}</span>
+                    <span>{{ piece.created_at[:10] }}</span>
+                    <span class="status-badge {{ piece.status }}">{{ piece.status }}</span>
+                </div>
+            </div>
+            {% endfor %}
+        {% else %}
+            <p style="color: var(--text2);">Контент ещё не сгенерирован. Используйте Telegram-бот.</p>
+        {% endif %}
+    </div>
+
+    <!-- Footer -->
+    <div class="footer">
+        HostAgent — AI-агент для заработка на партнёрских программах хостингов
+    </div>
+</div>
+</body>
+</html>

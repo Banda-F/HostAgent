@@ -1,0 +1,99 @@
+# HostAgent — Конфигурация
+# Скопируйте этот файл в config.yaml и заполните реальные значения
+
+# ===========================
+# AI / LLM настройки
+# ===========================
+llm:
+  # Провайдер: openai, ollama, anthropic
+  provider: openai
+  
+  openai:
+    api_key: "sk-your-api-key-here"
+    model: "gpt-4o-mini"
+    base_url: "https://api.openai.com/v1"
+    temperature: 0.7
+    max_tokens: 4096
+  
+  ollama:
+    base_url: "http://localhost:11434"
+    model: "llama3.1"
+    temperature: 0.7
+
+# ===========================
+# Telegram Bot
+# ===========================
+telegram:
+  bot_token: "your-telegram-bot-token-here"
+  webhook_url: ""
+  webhook_port: 8443
+  
+  # ID админов (для доступа к админским командам)
+  admin_ids: []
+
+# ===========================
+# Веб-дашборд
+# ===========================
+web:
+  host: "127.0.0.1"
+  port: 8080
+  secret_key: "change-this-to-a-random-secret"
+  
+  # Простая авторизация
+  auth:
+    username: "admin"
+    password: "changeme123"
+
+# ===========================
+# База данных
+# ===========================
+database:
+  path: "data/hostagent.db"
+  
+# ===========================
+# Сбор данных
+# ===========================
+scraper:
+  # Интервал обновления данных (часы)
+  update_interval_hours: 24
+  
+  # User-Agent для запросов
+  user_agent: "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36"
+  
+  # Задержка между запросами (секунды) — вежливый парсинг
+  request_delay: 2.0
+  
+  # Таймаут запросов
+  request_timeout: 30
+
+# ===========================
+# Короткие ссылки (опционально)
+# ===========================
+link_shortener:
+  # Метод: internal (используем свою БД), bitly, none
+  method: "internal"
+  
+  bitly:
+    access_token: ""
+
+# ===========================
+# Оповещения
+# ===========================
+notifications:
+  # Уведомлять об изменении условий партнёрских программ
+  notify_program_changes: true
+  
+  # Еженедельный отчёт
+  weekly_report: true
+  
+  # Час по Москве для отчётов
+  report_hour_utc: 9
+
+# ===========================
+# Логирование
+# ===========================
+logging:
+  level: "INFO"
+  file: "logs/hostagent.log"
+  max_size_mb: 10
+  backup_count: 5
