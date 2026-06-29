@@ -3,7 +3,7 @@ services:
     name: hostagent
     runtime: python
     buildCommand: pip install -r requirements.txt
-    startCommand: gunicorn render_app:app -k uvicorn.workers.UvicornWorker
+    startCommand: python render_app.py
     env: python
     plan: free
     healthCheckPath: /health
