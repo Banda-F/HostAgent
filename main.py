@@ -16,10 +16,10 @@ if str(project_root) not in sys.path:
 
 import click
 from config.config import get_config, load_config
-from src.data.database.models import Database, seed_database
-from src.core.llm_client import LLMClient
-from src.core.orchestrator import Orchestrator
-from src.data.parsers.collector import DataCollector
+from hostagent.data.database.models import Database, seed_database
+from hostagent.core.llm_client import LLMClient
+from hostagent.core.orchestrator import Orchestrator
+from hostagent.data.parsers.collector import DataCollector
 
 logger = logging.getLogger("hostagent")
 
@@ -51,7 +51,7 @@ async def init_database() -> Database:
 
 async def run_bot(db: Database):
     """Запускает Telegram-бот."""
-    from src.services.telegram_bot.bot import HostAgentBot
+    from hostagent.services.telegram_bot.bot import HostAgentBot
 
     llm = LLMClient()
     orchestrator = Orchestrator(db, llm)
@@ -62,7 +62,7 @@ async def run_bot(db: Database):
 async def run_web(db: Database):
     """Запускает веб-дашборд."""
     import uvicorn
-    from src.services.web_dashboard.app import app as web_app, get_db as _init_db
+    from hostagent.services.web_dashboard.app import app as web_app, get_db as _init_db
 
     cfg = get_config()
     logger.info(f"Web dashboard: http://{cfg.web.host}:{cfg.web.port}")

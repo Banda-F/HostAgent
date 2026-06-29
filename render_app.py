@@ -36,8 +36,8 @@ from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 
 from config.config import get_config
-from src.data.database.models import Database, seed_database
-from src.data.database.repository import Repository
+from hostagent.data.database.models import Database, seed_database
+from hostagent.data.database.repository import Repository
 
 # ============================================================
 # FastAPI app
@@ -86,7 +86,7 @@ async def on_startup():
 
     # 2. Сбор данных о хостингах
     try:
-        from src.data.parsers.collector import DataCollector
+        from hostagent.data.parsers.collector import DataCollector
         collector = DataCollector(_db)
         await collector.collect_all()
         logger.info("Data collection completed.")
@@ -95,9 +95,9 @@ async def on_startup():
 
     # 3. Telegram-бот в фоне
     try:
-        from src.core.llm_client import LLMClient
-        from src.core.orchestrator import Orchestrator
-        from src.services.telegram_bot.bot import HostAgentBot
+        from hostagent.core.llm_client import LLMClient
+        from hostagent.core.orchestrator import Orchestrator
+        from hostagent.services.telegram_bot.bot import HostAgentBot
 
         llm = LLMClient()
         orchestrator = Orchestrator(_db, llm)

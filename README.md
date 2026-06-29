@@ -34,7 +34,7 @@
 
 ```
 HostAgent/
-├── src/
+├── hostagent/               # Основной пакет проекта
 │   ├── agents/              # AI-агенты (Multi-Agent система)
 │   │   ├── analyst/         # Аналитик партнёрок
 │   │   ├── content_creator/  # Генератор контента
@@ -50,6 +50,10 @@ HostAgent/
 ├── config/                  # Конфигурация
 ├── prompts/                 # Шаблоны промптов для AI
 ├── tests/                   # Тесты
+├── render_app.py            # Точка входа для Render (веб + бот в одном процессе)
+├── render.yaml              # Конфигурация Render
+├── Procfile                 # Procfile для Render/Heroku
+├── runtime.txt              # Версия Python
 └── docs/                    # Документация
 ```
 
@@ -71,16 +75,16 @@ cp config/config.example.yaml config/config.yaml
 ### 3. Запуск
 ```bash
 # Запуск Telegram-бота
-python -m src.services.telegram_bot.bot
+python main.py bot
 
 # Запуск веб-дашборда
-python -m src.services.web_dashboard.app
+python main.py web
 
 # Запуск сборщика данных
-python -m src.data.parsers.collector
+python main.py collect
 
 # Полный запуск (все компоненты)
-python main.py --all
+python main.py all
 ```
 
 ## Технологии

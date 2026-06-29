@@ -184,10 +184,11 @@ D:\ai hosting\
 ├── config/
 │   ├── config.py               # Загрузчик конфигурации
 │   └── config.example.yaml     # Шаблон конфигурации
-├── src/
+├── hostagent/                  # Основной пакет проекта
 │   ├── core/
 │   │   ├── llm_client.py       # Клиент для LLM (OpenAI/Ollama)
-│   │   └── orchestrator.py     # Маршрутизатор запросов
+│   │   ├── orchestrator.py     # Маршрутизатор запросов
+│   │   └── types.py            # Общие типы (Intent, AgentResponse)
 │   ├── agents/
 │   │   ├── analyst/agent.py    # Агент-аналитик
 │   │   ├── content_creator/agent.py  # Генератор контента
@@ -207,6 +208,10 @@ D:\ai hosting\
 │   │       ├── app.py          # FastAPI приложение
 │   │       └── templates/dashboard.html
 │   └── utils/
+├── render_app.py               # Точка входа для Render (веб + бот)
+├── render.yaml                 # Конфигурация Render
+├── Procfile                    # Procfile для Render/Heroku
+├── runtime.txt                 # Версия Python
 └── prompts/
     ├── system.txt              # Системный промпт
     ├── analyst.txt             # Промпт аналитика

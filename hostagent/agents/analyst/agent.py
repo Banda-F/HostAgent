@@ -7,9 +7,9 @@ from __future__ import annotations
 
 import logging
 
-from src.core.llm_client import LLMClient, Message, load_prompt
-from src.core.types import Intent
-from src.data.database.repository import Repository
+from hostagent.core.llm_client import LLMClient, Message, load_prompt
+from hostagent.core.types import Intent
+from hostagent.data.database.repository import Repository
 
 logger = logging.getLogger(__name__)
 

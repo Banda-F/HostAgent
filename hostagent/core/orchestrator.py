@@ -7,13 +7,13 @@ from __future__ import annotations
 
 import logging
 
-from src.core.llm_client import LLMClient, Message, load_prompt
-from src.core.types import Intent, AgentResponse, INTENT_KEYWORDS
-from src.data.database.models import Database
-from src.data.database.repository import Repository
-from src.agents.analyst.agent import AnalystAgent
-from src.agents.content_creator.agent import ContentCreatorAgent
-from src.agents.link_manager.agent import LinkManagerAgent
+from hostagent.core.llm_client import LLMClient, Message, load_prompt
+from hostagent.core.types import Intent, AgentResponse, INTENT_KEYWORDS
+from hostagent.data.database.models import Database
+from hostagent.data.database.repository import Repository
+from hostagent.agents.analyst.agent import AnalystAgent
+from hostagent.agents.content_creator.agent import ContentCreatorAgent
+from hostagent.agents.link_manager.agent import LinkManagerAgent
 
 logger = logging.getLogger(__name__)
 

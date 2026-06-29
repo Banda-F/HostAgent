@@ -27,10 +27,10 @@ from telegram.ext import (
 )
 
 from config.config import get_config
-from src.core.llm_client import LLMClient
-from src.core.orchestrator import Orchestrator
-from src.data.database.models import Database, seed_database
-from src.data.database.repository import Repository
+from hostagent.core.llm_client import LLMClient
+from hostagent.core.orchestrator import Orchestrator
+from hostagent.data.database.models import Database, seed_database
+from hostagent.data.database.repository import Repository
 
 logger = logging.getLogger(__name__)
 

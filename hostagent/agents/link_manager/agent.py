@@ -9,8 +9,8 @@ import logging
 import re
 from urllib.parse import urlparse, urlencode, parse_qs, urlunparse, urljoin
 
-from src.core.llm_client import LLMClient, Message, load_prompt
-from src.data.database.repository import Repository
+from hostagent.core.llm_client import LLMClient, Message, load_prompt
+from hostagent.data.database.repository import Repository
 
 logger = logging.getLogger(__name__)
 

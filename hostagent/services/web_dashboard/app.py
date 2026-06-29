@@ -16,8 +16,8 @@ from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 
 from config.config import get_config
-from src.data.database.models import Database, seed_database
-from src.data.database.repository import Repository
+from hostagent.data.database.models import Database, seed_database
+from hostagent.data.database.repository import Repository
 
 logger = logging.getLogger(__name__)
 
