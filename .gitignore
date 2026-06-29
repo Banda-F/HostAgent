@@ -11,8 +11,8 @@ env/
 .env
 config/config.yaml
 
-# Database
-data/
+# Database files (in root /data/ directory only)
+/data/
 *.db
 *.sqlite3
 
