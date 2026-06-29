@@ -66,11 +66,16 @@ class LLMClient:
             return f"Ошибка при обращении к AI: {e}"
 
     async def _call_openai_compatible(self, payload: dict) -> str:
-        """Вызов OpenAI-совместимого API."""
+        """Вызов OpenAI-совместимого API (OpenAI, OpenRouter и др.)."""
         headers = {
             "Content-Type": "application/json",
             "Authorization": f"Bearer {self.config.api_key}",
         }
+
+        # OpenRouter требует дополнительные заголовки
+        if "openrouter.ai" in self.config.base_url:
+            headers["HTTP-Referer"] = "https://github.com/Banda-F/HostAgent"
+            headers["X-Title"] = "HostAgent"
 
         response = await self._client.post(
             f"{self.config.base_url}/chat/completions",

@@ -147,8 +147,14 @@ def _apply_env_overrides(cfg: AppConfig) -> AppConfig:
     # LLM
     if os.environ.get("OPENAI_API_KEY"):
         cfg.llm.api_key = os.environ["OPENAI_API_KEY"]
-    if os.environ.get("OPENAI_MODEL"):
-        cfg.llm.model = os.environ["OPENAI_MODEL"]
+    if os.environ.get("OPENROUTER_API_KEY"):
+        # Поддержка ключа OpenRouter (приоритет над OPENAI_API_KEY)
+        cfg.llm.api_key = os.environ["OPENROUTER_API_KEY"]
+        cfg.llm.base_url = "https://openrouter.ai/api/v1"
+    # Модель: поддерживаем оба имени переменной
+    model = os.environ.get("LLM_MODEL") or os.environ.get("OPENAI_MODEL")
+    if model:
+        cfg.llm.model = model
     if os.environ.get("OPENAI_BASE_URL"):
         cfg.llm.base_url = os.environ["OPENAI_BASE_URL"]
     if os.environ.get("LLM_PROVIDER"):

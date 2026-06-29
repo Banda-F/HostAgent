@@ -156,14 +156,17 @@ async def dashboard(request: Request, repo: Repository = Depends(get_repo)):
     links = await repo.get_user_links(int(user_id))
     content = await repo.get_user_content(int(user_id))
 
-    return templates.TemplateResponse("dashboard.html", {
-        "request": request,
-        "stats": stats,
-        "providers": providers,
-        "links": links[:20],
-        "content": content[:10],
-        "user_id": user_id,
-    })
+    return templates.TemplateResponse(
+        request=request,
+        name="dashboard.html",
+        context={
+            "stats": stats,
+            "providers": providers,
+            "links": links[:20],
+            "content": content[:10],
+            "user_id": user_id,
+        },
+    )
 
 
 # ============================================================
