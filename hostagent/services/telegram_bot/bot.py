@@ -199,9 +199,69 @@ class HostAgentBot:
 
     # ===== Обработка текстовых сообщений =====
 
+    # Соответствие текстов reply-кнопок → подсказкам (без вызова LLM)
+    KEYBOARD_HINTS = {
+        "анализ хостингов": (
+            f"📊 *Анализ хостингов*\n\n"
+            "Напиши, что сравнить или подобрать:\n"
+            "• «Сравни Beget и Timeweb»\n"
+            "• «Какой хостинг лучше для WordPress?»\n"
+            "• «Хостинг с максимальной комиссией»"
+        ),
+        "создать контент": (
+            f"✍️ *Генерация контента*\n\n"
+            "Что создать? Например:\n"
+            "• «Напиши пост про Beget для Telegram»\n"
+            "• «Создай обзор Timeweb»\n"
+            "• «Сравнение Beget и Reg.ru»"
+        ),
+        "мои ссылки": None,   # обрабатывается отдельно
+        "прогноз дохода": (
+            f"💰 *Прогноз дохода*\n\n"
+            "Опиши свою аудиторию:\n"
+            "• «У меня 2000 подписчиков в Telegram»\n"
+            "• «Блог с 5000 посещений в месяц»"
+        ),
+        "помощь": None,  # обрабатывается отдельно через /help
+    }
+
     async def handle_message(self, update: Update, context: ContextTypes.DEFAULT_TYPE):
         """Обрабатывает произвольное сообщение через AI-оркестратор."""
-        await self._process_with_typing(update, update.message.text)
+        text = (update.message.text or "").strip()
+        text_clean = text.lower().replace("🤖", "").replace("📊", "").replace("✍️", "")
+        text_clean = text_clean.replace("🔗", "").replace("💰", "").replace("❓", "").strip()
+
+        # Перехватываем тексты кнопок клавиатуры — не отправляем их в LLM
+        if text_clean == "мои ссылки":
+            response = await self.orchestrator.handle(
+                user_id=update.effective_user.id,
+                text="покажи мои ссылки",
+                username=update.effective_user.username or "",
+            )
+            await update.message.reply_text(
+                response.text, parse_mode=ParseMode.MARKDOWN,
+            )
+            return
+
+        if text_clean == "помощь":
+            response = await self.orchestrator.handle(
+                user_id=update.effective_user.id,
+                text="помощь",
+                username=update.effective_user.username or "",
+            )
+            await update.message.reply_text(
+                response.text, parse_mode=ParseMode.MARKDOWN,
+            )
+            return
+
+        # Остальные кнопки — показываем подсказку без вызова LLM
+        hint = self.KEYBOARD_HINTS.get(text_clean)
+        if hint:
+            await update.message.reply_text(hint, parse_mode=ParseMode.MARKDOWN)
+            return
+
+        # Реальный запрос пользователя → AI
+        await self._process_with_typing(update, text)
 
     async def handle_button(self, update: Update, context: ContextTypes.DEFAULT_TYPE):
         """Обработка нажатий inline-кнопок."""

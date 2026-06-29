@@ -150,11 +150,23 @@ async def health():
 # ============================================================
 @app.get("/", response_class=HTMLResponse)
 async def dashboard(request: Request, repo: Repository = Depends(get_repo)):
-    user_id = request.query_params.get("user_id", 1)
-    stats = await repo.get_dashboard_stats(int(user_id))
+    # Список всех пользователей для переключателя
+    all_users = await repo.get_all_users()
+
+    # Определяем user_id: из параметра URL, иначе — последний активный пользователь
+    user_id_param = request.query_params.get("user_id")
+    if user_id_param:
+        user_id = int(user_id_param)
+    elif all_users:
+        # Берём первого пользователя (самый свежий, т.к. отсортированы DESC)
+        user_id = all_users[0]["id"]
+    else:
+        user_id = 1  # fallback
+
+    stats = await repo.get_dashboard_stats(user_id)
     providers = await repo.get_all_providers()
-    links = await repo.get_user_links(int(user_id))
-    content = await repo.get_user_content(int(user_id))
+    links = await repo.get_user_links(user_id)
+    content = await repo.get_user_content(user_id)
 
     return templates.TemplateResponse(
         request=request,
@@ -165,6 +177,7 @@ async def dashboard(request: Request, repo: Repository = Depends(get_repo)):
             "links": links[:20],
             "content": content[:10],
             "user_id": user_id,
+            "all_users": all_users,
         },
     )
 

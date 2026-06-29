@@ -109,6 +109,17 @@ class Repository:
         )
         return user_id
 
+    async def get_all_users(self) -> list[dict]:
+        """Возвращает список всех пользователей (для дашборда)."""
+        rows = await self.db.fetchall(
+            """SELECT id, telegram_id, username, display_name,
+                      (SELECT COUNT(*) FROM affiliate_links
+                       WHERE user_id = up.id) as links_count
+               FROM user_profiles up
+               ORDER BY id DESC"""
+        )
+        return [dict(r) for r in rows]
+
     async def update_user_profile(self, user_id: int, niche: str = None,
                                   audience_size: int = None,
                                   primary_channel: str = None):

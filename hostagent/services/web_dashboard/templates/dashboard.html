@@ -195,6 +195,23 @@
         <span class="header-badge">v1.0 Dashboard</span>
     </div>
 
+    <!-- User selector -->
+    {% if all_users %}
+    <div class="section" style="padding: 16px 24px;">
+        <div style="display: flex; align-items: center; gap: 12px; flex-wrap: wrap;">
+            <span style="color: var(--text2); font-size: 0.85rem;">👤 Пользователь:</span>
+            {% for u in all_users %}
+            <a href="/?user_id={{ u.id }}"
+               style="padding: 4px 12px; border-radius: 16px; font-size: 0.8rem; text-decoration: none;
+                      {% if u.id == user_id %}background: var(--accent); color: white;{% else %}background: var(--surface2); color: var(--text2);{% endif %}">
+                {{ u.display_name or u.username or ('ID ' ~ u.id) }}
+                {% if u.links_count %}<span style="opacity:0.7;"> ({{ u.links_count }})</span>{% endif %}
+            </a>
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
+
     <!-- Stats Cards -->
     <div class="stats-grid">
         <div class="stat-card">
