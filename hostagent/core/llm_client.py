@@ -5,6 +5,7 @@ HostAgent — LLM клиент
 """
 from __future__ import annotations
 
+import asyncio
 import json
 import logging
 from dataclasses import dataclass
@@ -36,8 +37,9 @@ class LLMClient:
         messages: list[Message],
         temperature: float | None = None,
         max_tokens: int | None = None,
+        retries: int = 3,
     ) -> str:
-        """Отправляет сообщения в LLM и возвращает ответ."""
+        """Отправляет сообщения в LLM и возвращает ответ. С ретраями при 429."""
         temperature = temperature or self.config.temperature
         max_tokens = max_tokens or self.config.max_tokens
 
@@ -48,22 +50,32 @@ class LLMClient:
             "max_tokens": max_tokens,
         }
 
-        try:
-            if self.config.provider == "ollama":
-                response = await self._call_ollama(payload)
-            else:
-                # OpenAI и совместимые API
-                response = await self._call_openai_compatible(payload)
+        for attempt in range(retries):
+            try:
+                if self.config.provider == "ollama":
+                    return await self._call_ollama(payload)
+                else:
+                    return await self._call_openai_compatible(payload)
 
-            logger.debug(f"LLM response ({len(response)} chars)")
-            return response
+            except httpx.TimeoutException:
+                logger.error("LLM request timed out")
+                return "Извините, запрос к AI занял слишком много времени. Попробуйте ещё раз."
 
-        except httpx.TimeoutException:
-            logger.error("LLM request timed out")
-            return "Извините, запрос к AI занял слишком много времени. Попробуйте ещё раз."
-        except Exception as e:
-            logger.error(f"LLM request failed: {e}")
-            return f"Ошибка при обращении к AI: {e}"
+            except httpx.HTTPStatusError as e:
+                if e.response.status_code == 429 and attempt < retries - 1:
+                    # Rate limit — ждём и пробуем снова
+                    wait = 5 * (attempt + 1)  # 5, 10, 15 сек
+                    logger.warning(f"LLM 429 rate limit. Retrying in {wait}s (attempt {attempt+1}/{retries})")
+                    await asyncio.sleep(wait)
+                    continue
+                logger.error(f"LLM HTTP {e.response.status_code}: {e}")
+                return f"Ошибка AI (HTTP {e.response.status_code}). Попробуйте через минуту."
+
+            except Exception as e:
+                logger.error(f"LLM request failed: {e}")
+                return f"Ошибка при обращении к AI: {e}"
+
+        return "Не удалось получить ответ от AI после нескольких попыток."
 
     async def _call_openai_compatible(self, payload: dict) -> str:
         """Вызов OpenAI-совместимого API (OpenAI, OpenRouter и др.)."""

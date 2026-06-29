@@ -44,8 +44,8 @@ from hostagent.data.database.repository import Repository
 # ============================================================
 app = FastAPI(title="HostAgent", version="1.0.0")
 
-TEMPLATES_DIR = project_root / "src" / "services" / "web_dashboard" / "templates"
-STATIC_DIR = project_root / "src" / "services" / "web_dashboard" / "static"
+TEMPLATES_DIR = project_root / "hostagent" / "services" / "web_dashboard" / "templates"
+STATIC_DIR = project_root / "hostagent" / "services" / "web_dashboard" / "static"
 STATIC_DIR.mkdir(parents=True, exist_ok=True)
 templates = Jinja2Templates(directory=str(TEMPLATES_DIR))
 
