@@ -29,6 +29,14 @@ class LLMClient:
 
     def __init__(self, config: LLMConfig | None = None):
         self.config = config or get_config().llm
+        # Очищаем base_url от пробелов/переносов (частая проблема env vars в Render)
+        if self.config.base_url:
+            self.config.base_url = self.config.base_url.strip().rstrip("/")
+        logger.info(
+            f"LLM client configured: provider={self.config.provider}, "
+            f"model={self.config.model}, base_url={self.config.base_url}, "
+            f"api_key={'***' + self.config.api_key[-4:] if self.config.api_key else 'NOT SET'}"
+        )
         self._client = httpx.AsyncClient(timeout=120.0)
         self._conversation_history: list[Message] = []
 
@@ -72,7 +80,16 @@ class LLMClient:
                 return f"Ошибка AI (HTTP {e.response.status_code}). Попробуйте через минуту."
 
             except Exception as e:
-                logger.error(f"LLM request failed: {e}")
+                err_str = str(e)
+                logger.error(f"LLM request failed: {e} | base_url={self.config.base_url}")
+                # DNS-ошибка — домен не резолвится
+                if "Name or service not known" in err_str or "NameResolutionError" in err_str:
+                    return (
+                        f"⚠️ Не удалось подключиться к AI-серверу.\n"
+                        f"Проверьте переменную OPENAI_BASE_URL в Render.\n"
+                        f"Текущее значение: `{self.config.base_url}`\n\n"
+                        f"Должно быть: `https://openrouter.ai/api/v1`"
+                    )
                 return f"Ошибка при обращении к AI: {e}"
 
         return "Не удалось получить ответ от AI после нескольких попыток."

@@ -160,9 +160,11 @@ def _apply_env_overrides(cfg: AppConfig) -> AppConfig:
     if os.environ.get("LLM_PROVIDER"):
         cfg.llm.provider = os.environ["LLM_PROVIDER"]
 
-    # Гарантируем, что base_url содержит протокол (http:// или https://)
-    if cfg.llm.base_url and not cfg.llm.base_url.startswith(("http://", "https://")):
-        cfg.llm.base_url = "https://" + cfg.llm.base_url.lstrip("/")
+    # Гарантируем, что base_url корректный: чистим пробелы + добавляем протокол
+    if cfg.llm.base_url:
+        cfg.llm.base_url = cfg.llm.base_url.strip().rstrip("/")
+        if not cfg.llm.base_url.startswith(("http://", "https://")):
+            cfg.llm.base_url = "https://" + cfg.llm.base_url.lstrip("/")
 
     # Telegram
     if os.environ.get("TELEGRAM_BOT_TOKEN"):
